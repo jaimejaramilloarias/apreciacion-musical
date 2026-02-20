@@ -5,8 +5,6 @@ Aplicación web móvil para catalogar temas de jazz del siglo XX.
 ## Características
 - Menús principales: **Temas, Estilos, Intérpretes, Albums, Año, Disquera**.
 - Menú **+ Nuevo tema** con formulario completo.
-- Exportación de toda la librería a archivo **.json**.
-- Carga/importación de librería completa desde archivo **.json** válido.
 - Persistencia local con `localStorage`.
 - Ordenamientos:
   - **Temas**: alfabético por nombre.

@@ -145,23 +145,3 @@ a {
   color: #82defd;
   text-decoration: none;
 }
-
-
-.secondary-btn {
-  background: #1f2e3f;
-  border-color: #3a4f69;
-}
-
-.file-upload {
-  background: rgba(35, 42, 53, 0.6);
-  border: 1px dashed #42556f;
-  border-radius: 10px;
-  padding: 0.58rem;
-}
-
-.file-upload input[type='file'] {
-  margin-top: 0.5rem;
-  border: none;
-  padding: 0;
-  background: transparent;
-}

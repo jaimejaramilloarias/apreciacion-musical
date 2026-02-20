@@ -60,7 +60,9 @@ function renderGrouped(title, songs, field, byYear = false) {
 
   const grouped = groupBy(songs, field);
   const keys = Object.keys(grouped);
-  const sortedKeys = byYear ? keys.sort((a, b) => Number(a) - Number(b)) : sortAlphabetic(keys);
+  const sortedKeys = byYear
+    ? keys.sort((a, b) => Number(a) - Number(b))
+    : sortAlphabetic(keys);
 
   sortedKeys.forEach((key) => {
     const section = document.createElement('article');
@@ -110,73 +112,9 @@ function renderTemas(songs) {
   content.appendChild(template);
 }
 
-function exportLibrary(songs) {
-  const payload = {
-    exportedAt: new Date().toISOString(),
-    total: songs.length,
-    songs
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'apreciacion-musical-jazz-biblioteca.json';
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-}
-
-function normalizeImportedSongs(input) {
-  if (!Array.isArray(input)) return null;
-
-  const normalized = input
-    .filter((item) => item && typeof item === 'object')
-    .map((item) => ({
-      nombre: String(item.nombre || '').trim(),
-      link: String(item.link || '').trim(),
-      estilo: String(item.estilo || '').trim(),
-      interpretes: String(item.interpretes || '').trim(),
-      album: String(item.album || '').trim(),
-      anio: Number(item.anio),
-      disquera: String(item.disquera || '').trim(),
-      observaciones: String(item.observaciones || '').trim()
-    }))
-    .filter((song) => song.nombre && song.link && song.estilo && song.interpretes && song.album && song.disquera && Number.isFinite(song.anio));
-
-  return normalized.length ? normalized : null;
-}
-
-function importLibrary(file, onImported) {
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    try {
-      const parsed = JSON.parse(String(reader.result));
-      const sourceSongs = Array.isArray(parsed) ? parsed : parsed.songs;
-      const normalized = normalizeImportedSongs(sourceSongs);
-
-      if (!normalized) {
-        alert('El archivo no contiene una librería válida.');
-        return;
-      }
-
-      saveSongs(normalized);
-      alert(`Librería cargada correctamente con ${normalized.length} tema(s).`);
-      onImported();
-    } catch (error) {
-      alert('No se pudo leer el archivo JSON. Verifica su formato.');
-    }
-  };
-
-  reader.readAsText(file);
-}
-
 function renderForm(songs) {
   const template = document.getElementById('form-template').content.cloneNode(true);
   const form = template.querySelector('#song-form');
-  const exportButton = template.querySelector('#export-json');
-  const importInput = template.querySelector('#import-json');
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -188,21 +126,6 @@ function renderForm(songs) {
     saveSongs(songs);
     form.reset();
     alert('Tema guardado correctamente. Ya aparece en los menús.');
-  });
-
-  exportButton.addEventListener('click', () => {
-    exportLibrary(loadSongs());
-  });
-
-  importInput.addEventListener('change', (event) => {
-    const [file] = event.target.files || [];
-    if (!file) return;
-
-    importLibrary(file, () => {
-      renderView('temas');
-    });
-
-    event.target.value = '';
   });
 
   content.innerHTML = '';
