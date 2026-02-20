@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apreciación Musical del Jazz del Siglo XX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <p class="eyebrow">Catálogo móvil</p>
+        <h1>Apreciación Musical del Jazz del Siglo XX</h1>
+        <p class="credits">Jaime Jaramillo Arias - UNIVERSIDAD DE CALDAS</p>
+      </header>
+
+      <nav class="main-nav" aria-label="Menú principal">
+        <button class="tab-btn active" data-view="temas">Temas</button>
+        <button class="tab-btn" data-view="estilos">Estilos</button>
+        <button class="tab-btn" data-view="interpretes">Intérpretes</button>
+        <button class="tab-btn" data-view="albums">Albums</button>
+        <button class="tab-btn" data-view="anio">Año</button>
+        <button class="tab-btn" data-view="disquera">Disquera</button>
+        <button class="tab-btn add-btn" data-view="nuevo">+ Nuevo tema</button>
+      </nav>
+
+      <main id="content" aria-live="polite"></main>
+    </div>
+
+    <template id="list-template">
+      <section>
+        <h2 class="section-title"></h2>
+        <div class="list-container"></div>
+      </section>
+    </template>
+
+    <template id="form-template">
+      <section>
+        <h2 class="section-title">Añadir nuevo tema</h2>
+        <form id="song-form" class="song-form">
+          <label>Nombre del tema <input required name="nombre" /></label>
+          <label>Link <input required name="link" type="url" placeholder="https://..." /></label>
+          <label>Estilo <input required name="estilo" /></label>
+          <label>Intérprete(s) <input required name="interpretes" placeholder="Separados por coma" /></label>
+          <label>Album <input required name="album" /></label>
+          <label>Año de grabación <input required name="anio" type="number" min="1900" max="2000" /></label>
+          <label>Disquera <input required name="disquera" /></label>
+          <label>Observaciones <textarea name="observaciones" rows="3"></textarea></label>
+          <button type="submit">Guardar tema</button>
+          <button type="button" id="export-json" class="secondary-btn">Exportar librería (.json)</button>
+          <label class="file-upload"
+            >Cargar librería (.json)
+            <input id="import-json" type="file" accept=".json,application/json" />
+          </label>
+        </form>
+      </section>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
