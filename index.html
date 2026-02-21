@@ -18,7 +18,6 @@
         <p class="eyebrow">Catálogo móvil</p>
         <h1>Apreciación Musical del Jazz del Siglo XX</h1>
         <p class="credits">Jaime Jaramillo Arias - UNIVERSIDAD DE CALDAS</p>
-        <p class="build-version" id="build-version">Versión: cargando...</p>
       </header>
 
       <nav class="main-nav" aria-label="Menú principal">
@@ -53,13 +52,7 @@
           <label>Año de grabación <input required name="anio" type="number" min="1900" max="2000" /></label>
           <label>Disquera <input required name="disquera" /></label>
           <label>Observaciones <textarea name="observaciones" rows="3"></textarea></label>
-          <button type="submit" id="save-song">Guardar tema</button>
-          <button type="button" id="cancel-edit" class="secondary-btn" hidden>Cancelar edición</button>
-          <button type="button" id="export-json" class="secondary-btn">Exportar librería (.json)</button>
-          <label class="file-upload"
-            >Cargar librería (.json)
-            <input id="import-json" type="file" accept=".json,application/json" />
-          </label>
+          <button type="submit">Guardar tema</button>
         </form>
       </section>
     </template>
