@@ -5,9 +5,6 @@ Aplicación web móvil para catalogar temas de jazz del siglo XX.
 ## Características
 - Menús principales: **Temas, Estilos, Intérpretes, Albums, Año, Disquera**.
 - Menú **+ Nuevo tema** con formulario completo.
-- Edición y borrado de temas existentes desde los listados.
-- Exportación de toda la librería a archivo **.json**.
-- Carga/importación de librería completa desde archivo **.json** válido.
 - Persistencia local con `localStorage`.
 - Ordenamientos:
   - **Temas**: alfabético por nombre.
@@ -29,14 +26,3 @@ Para lanzarla desde un link de GitHub:
 2. Activa **Settings → Pages**.
 3. Selecciona la rama principal y carpeta `/root`.
 4. GitHub entregará un enlace público para abrir la app.
-
-
-## Publicación automática (sin programar)
-Para que se publique sola cada vez que cambies algo:
-
-1. Sube este proyecto a GitHub y usa la rama `main`.
-2. En GitHub entra a **Settings → Pages**.
-3. En **Build and deployment**, selecciona **Source: GitHub Actions**.
-4. Listo: desde ahora, cada `push` a `main` actualiza el sitio automáticamente.
-
-> Nota: este repositorio incluye el workflow `.github/workflows/deploy-pages.yml` para automatizar el despliegue.
