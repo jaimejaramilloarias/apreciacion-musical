@@ -145,3 +145,30 @@ a {
   color: #82defd;
   text-decoration: none;
 }
+
+.song-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.secondary-btn,
+.danger-btn {
+  border: 1px solid #314054;
+  border-radius: 10px;
+  background: var(--chip);
+  color: var(--text);
+  padding: 0.5rem 0.65rem;
+  font-size: 0.86rem;
+}
+
+.danger-btn {
+  border-color: #703142;
+  background: #4b1c2a;
+}
+
+.group p {
+  margin: 0.45rem 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
