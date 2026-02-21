@@ -76,6 +76,80 @@ function groupBy(songs, field) {
   return map;
 }
 
+function splitInterpretes(rawInterpretes) {
+  return String(rawInterpretes)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function createSongDetailBlock(song, includeActions = false) {
+  const detail = document.createElement('div');
+  detail.className = 'song-detail';
+
+  const fields = [
+    `Año: ${song.anio || 'Sin dato'}`,
+    `Estilo: ${song.estilo || 'Sin dato'}`,
+    `Intérprete(s): ${song.interpretes || 'Sin dato'}`,
+    `Album: ${song.album || 'Sin dato'}`,
+    `Disquera: ${song.disquera || 'Sin dato'}`,
+    `Observaciones: ${song.observaciones || 'Sin observaciones'}`
+  ];
+
+  fields.forEach((field) => {
+    const line = document.createElement('p');
+    line.textContent = field;
+    detail.appendChild(line);
+  });
+
+  const sourceLink = document.createElement('a');
+  sourceLink.href = song.link;
+  sourceLink.target = '_blank';
+  sourceLink.rel = 'noreferrer';
+  sourceLink.textContent = 'Escuchar / referencia';
+  detail.appendChild(sourceLink);
+
+  if (includeActions) {
+    const actions = document.createElement('div');
+    actions.className = 'song-actions';
+
+    const editButton = document.createElement('button');
+    editButton.type = 'button';
+    editButton.className = 'secondary-btn';
+    editButton.textContent = 'Editar';
+    editButton.addEventListener('click', () => renderForm(loadSongs(), song.id));
+
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.className = 'danger-btn';
+    deleteButton.textContent = 'Borrar';
+    deleteButton.addEventListener('click', () => {
+      const accepted = confirm(`¿Seguro que deseas borrar "${song.nombre}"?`);
+      if (!accepted) return;
+
+      const updatedSongs = loadSongs().filter((storedSong) => storedSong.id !== song.id);
+      saveSongs(updatedSongs);
+      renderView('temas');
+    });
+
+    actions.append(editButton, deleteButton);
+    detail.appendChild(actions);
+  }
+
+  return detail;
+}
+
+function createToggleLink(label, onClick) {
+  const link = document.createElement('a');
+  link.href = '#';
+  link.textContent = label;
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    onClick();
+  });
+  return link;
+}
+
 function renderGrouped(title, songs, field, byYear = false) {
   const template = document.getElementById('list-template').content.cloneNode(true);
   template.querySelector('.section-title').textContent = title;
@@ -124,34 +198,62 @@ function renderTemas(songs) {
     .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }))
     .forEach((song) => {
       const item = document.createElement('li');
-      item.innerHTML = `<strong>${song.nombre}</strong> (${song.anio}) · ${song.estilo}<br/><small>${song.interpretes} · ${song.album} · ${song.disquera}</small><br/><a href="${song.link}" target="_blank" rel="noreferrer">Escuchar / referencia</a>`;
-
-      const actions = document.createElement('div');
-      actions.className = 'song-actions';
-
-      const editButton = document.createElement('button');
-      editButton.type = 'button';
-      editButton.className = 'secondary-btn';
-      editButton.textContent = 'Editar';
-      editButton.addEventListener('click', () => renderForm(loadSongs(), song.id));
-
-      const deleteButton = document.createElement('button');
-      deleteButton.type = 'button';
-      deleteButton.className = 'danger-btn';
-      deleteButton.textContent = 'Borrar';
-      deleteButton.addEventListener('click', () => {
-        const accepted = confirm(`¿Seguro que deseas borrar "${song.nombre}"?`);
-        if (!accepted) return;
-
-        const updatedSongs = loadSongs().filter((storedSong) => storedSong.id !== song.id);
-        saveSongs(updatedSongs);
-        renderView('temas');
+      const link = createToggleLink(song.nombre, () => {
+        detail.hidden = !detail.hidden;
       });
+      item.appendChild(link);
 
-      actions.append(editButton, deleteButton);
-      item.appendChild(actions);
+      const detail = createSongDetailBlock(song, true);
+      detail.hidden = true;
+      item.appendChild(detail);
       list.appendChild(item);
     });
+
+  wrapper.appendChild(list);
+  listContainer.appendChild(wrapper);
+
+  content.innerHTML = '';
+  content.appendChild(template);
+}
+
+function renderInterpretes(songs) {
+  const template = document.getElementById('list-template').content.cloneNode(true);
+  template.querySelector('.section-title').textContent = 'Intérpretes (orden alfabético)';
+  const listContainer = template.querySelector('.list-container');
+
+  const interpretesMap = songs.reduce((acc, song) => {
+    const uniqueNames = [...new Set(splitInterpretes(song.interpretes))];
+    uniqueNames.forEach((name) => {
+      if (!acc[name]) acc[name] = [];
+      acc[name].push(song);
+    });
+    return acc;
+  }, {});
+
+  const wrapper = document.createElement('article');
+  wrapper.className = 'group';
+  const list = document.createElement('ul');
+
+  sortAlphabetic(Object.keys(interpretesMap)).forEach((interprete) => {
+    const item = document.createElement('li');
+    const songsList = document.createElement('ul');
+    songsList.hidden = true;
+
+    interpretesMap[interprete]
+      .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }))
+      .forEach((song) => {
+        const songItem = document.createElement('li');
+        songItem.textContent = song.nombre;
+        songsList.appendChild(songItem);
+      });
+
+    const link = createToggleLink(interprete, () => {
+      songsList.hidden = !songsList.hidden;
+    });
+
+    item.append(link, songsList);
+    list.appendChild(item);
+  });
 
   wrapper.appendChild(list);
   listContainer.appendChild(wrapper);
@@ -278,7 +380,7 @@ function renderView(view) {
 
   if (view === 'temas') return renderTemas([...songs]);
   if (view === 'estilos') return renderGrouped('Estilos', songs, 'estilo');
-  if (view === 'interpretes') return renderGrouped('Intérpretes', songs, 'interpretes');
+  if (view === 'interpretes') return renderInterpretes(songs);
   if (view === 'albums') return renderGrouped('Albums', songs, 'album');
   if (view === 'anio') return renderGrouped('Año de grabación', songs, 'anio', true);
   if (view === 'disquera') return renderGrouped('Disquera', songs, 'disquera');
