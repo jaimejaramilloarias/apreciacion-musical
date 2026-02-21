@@ -243,7 +243,14 @@ function renderInterpretes(songs) {
       .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }))
       .forEach((song) => {
         const songItem = document.createElement('li');
-        songItem.textContent = song.nombre;
+        const detail = createSongDetailBlock(song);
+        detail.hidden = true;
+
+        const songLink = createToggleLink(song.nombre, () => {
+          detail.hidden = !detail.hidden;
+        });
+
+        songItem.append(songLink, detail);
         songsList.appendChild(songItem);
       });
 
